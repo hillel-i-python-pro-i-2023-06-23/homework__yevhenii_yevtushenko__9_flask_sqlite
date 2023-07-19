@@ -7,10 +7,9 @@ def create_table():
             connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS users (
-                    pk INTEGER NOT NULL PRIMARY KEY ,
-                    name VARCHAR NOT NULL,
-                    phone INTEGER NOT NULL
-                   
+                pk INTEGER NOT NULL PRIMARY KEY ,
+                name VARCHAR NOT NULL,
+                phone INTEGER NOT NULL
                 );
                 """
             )

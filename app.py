@@ -8,16 +8,18 @@ from application.services.db_connection import DBConnection
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():  # put application's code here
-    return '/users/create?name=User`s name&phone=User`s phone number - create user<br>' \
-           '/users/read-all - read all users<br>' \
-           '/users/read/"User`s name" - read user by name<br>' \
-           '/users/update/"User`s personal key" - update user by pk<br>' \
-           '/users/delete/"User`s personal key" - delete user by pk<br>'
+    return (
+        "/users/create?name=User`s name&phone=User`s phone number - create user<br>"
+        "/users/read-all - read all users<br>"
+        '/users/read/"User`s name" - read user by name<br>'
+        '/users/update/"User`s personal key" - update user by pk<br>'
+        '/users/delete/"User`s personal key" - delete user by pk<br>'
+    )
 
 
-@app.route('/users/create')
+@app.route("/users/create")
 @use_args({"name": fields.Str(required=True), "phone": fields.Int(required=True)}, location="query")
 def create_user(args):
     with DBConnection() as connection:
@@ -27,26 +29,26 @@ def create_user(args):
                 INSERT INTO users (name, phone)
                 VALUES (:name, :phone)
                 """,
-                ({"name": args["name"], "phone": args["phone"]})
+                ({"name": args["name"], "phone": args["phone"]}),
             )
     return "User created"
 
 
-@app.route('/users/read-all')
+@app.route("/users/read-all")
 def read_all_users():
     with DBConnection() as connection:
         users = connection.execute("SELECT * FROM users;").fetchall()
     return "<br>".join([f" {user['pk']}: Name: {user['name']}  Phone number: {user['phone']}" for user in users])
 
 
-@app.route('/users/read/<string:name>')
+@app.route("/users/read/<string:name>")
 def read_user(name: str):
     with DBConnection() as connection:
         user = connection.execute("SELECT name, phone FROM users WHERE name = ?;", (name,)).fetchone()
     return "<br>".join([f"  Phone number: {user['phone']}"])
 
 
-@app.route('/users/update/<int:pk>')
+@app.route("/users/update/<int:pk>")
 @use_args({"name": fields.Str(), "phone": fields.Int()}, location="query")
 def update_user(args, pk: int):
     with DBConnection() as connection:
@@ -71,25 +73,20 @@ def update_user(args, pk: int):
                 SET {args_2}
                 WHERE pk = :pk
                 """,
-                ({"pk": pk, "name": name, "phone": phone})
+                ({"pk": pk, "name": name, "phone": phone}),
             )
     return "User updated"
 
 
-@app.route('/users/delete/<int:pk>')
+@app.route("/users/delete/<int:pk>")
 def delete_user(pk: int):
     with DBConnection() as connection:
         with connection:
-            connection.execute(
-                f"""
-                DELETE FROM users
-                WHERE pk = :pk
-                """,
-                ({"pk": pk})
-            )
+            connection.execute("DELETE FROM users WHERE pk = :pk", {"pk": pk})
+
     return "User deleted"
 
 
 create_table()
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
