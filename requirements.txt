@@ -1,9 +1,5 @@
 flask==2.3.2
 webargs==8.3.0
-
-
-
-
 # Pre-commit hook.
 pre-commit==3.3.3
 # Upgrade syntax.

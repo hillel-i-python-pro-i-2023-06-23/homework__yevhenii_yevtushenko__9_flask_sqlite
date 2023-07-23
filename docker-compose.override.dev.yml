@@ -8,6 +8,6 @@ services:
     command:
       - --host=0.0.0.0
     volumes:
-      - ./db:/wd/db:ro
+      - ./db:/wd/db:rw
 
     user: "1000"
